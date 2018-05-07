@@ -6,8 +6,9 @@ CONFIGFOLDER='/root/.MedicCoin'
 COIN_DAEMON='MedicCoind'
 COIN_CLI='MedicCoind'
 COIN_PATH='/usr/local/bin/'
-COIN_TGZ='https://github.com/Medic/releases/download/v1.0.0.0/Medic.tar.gz'
+COIN_TGZ='https://github.com/zoldur/Medic/releases/download/v1.0.0.0/Medic.tar.gz'
 COIN_ZIP=$(echo $COIN_TGZ | awk -F'/' '{print $NF}')
+COIN_BLOCK='https://github.com/zoldur/Medic/releases/download/v1.0.0.0/blocks.tar.gz'
 COIN_NAME='MedicCoin'
 COIN_PORT=2118
 RPC_PORT=2117
@@ -23,12 +24,21 @@ NC='\033[0m'
 function download_node() {
   echo -e "Preparing to download ${GREEN}$COIN_NAME${NC}."
   cd $TMP_FOLDER >/dev/null 2>&1
-  wget -q $COIN_TGZ
+  wget $COIN_TGZ
   compile_error
   tar xvzf $COIN_ZIP -C $COIN_PATH
   cd - >/dev/null 2>&1
   rm -rf $TMP_FOLDER >/dev/null 2>&1
   clear
+}
+
+function download_blocks() {
+ echo -e "Downloading $COIN_NAME blocks"
+ cd $CONFIGFOLDER
+ wget -q $COIN_BLOCK
+ tar xvzf blocks.tar.gz >/dev/null 2>&1
+ rm blocks.tar.gz
+ cd -
 }
 
 
@@ -237,6 +247,7 @@ function setup_node() {
   create_config
   create_key
   update_config
+  download_blocks
   enable_firewall
   important_information
   configure_systemd
